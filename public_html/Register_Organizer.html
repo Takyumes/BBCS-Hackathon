@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Warmth & Care Hub</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css"> 
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="left-half"> <!--Background splitting for aesthetic-->
+            <div class="center-box">
+                <p class="slogan">Warmth & Care Hub</p>
+                <p class="subtext">Connecting Hearts, Changing Lives</p>
+            </div> <!--Box for slogan-->           
+        </div>
+        <div class="right-half"> <!-- Right side of main registration page-->                 
+                <form id="registrationForm">                 
+                    <input id="orgName" class="form-fields" type="text" placeholder="Organization Name" required>
+                    <input id="orgDescription" class="form-fields" type="text" placeholder="Organization Description" required>
+                    <input id="email" class="form-fields" type="email" placeholder="Email" required>
+                    <input id="contact" class="form-fields" type="text" placeholder="Contact No." required>
+                    <input id="orgLogo" class="form-fields" type="file" accept="image/*" required> <!-- Image upload -->
+
+                    <div class="register-text">Register an Organizer Profile</div>
+                    <button id="submitBtn" class="submit-button" type="submit">Submit</button>
+                </form>            
+        </div>
+        
+        <!-- Firebase Configuration and Script -->
+        <script type="module">
+            // Import Firebase modules
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+        
+            // Firebase Configuration
+            const firebaseConfig = { 
+                apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+                authDomain: "warmth-and-care-hub.firebaseapp.com",
+                projectId: "warmth-and-care-hub",
+                storageBucket: "warmth-and-care-hub.appspot.com", 
+                messagingSenderId: "367718144977",
+                appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+                measurementId: "G-5D39RT99NX"
+            };
+        
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const storage = getStorage(app);
+        
+            // Form submission event listener
+            const organizerForm = document.getElementById("registrationForm");
+        
+            organizerForm.addEventListener("submit", async (e) => {
+                e.preventDefault(); // Prevent default form submission
+                
+                // Retrieve input values
+                const orgName = document.getElementById("orgName").value;
+                const orgDescription = document.getElementById("orgDescription").value;
+                const email = document.getElementById("email").value;
+                const contact = document.getElementById("contact").value;
+                const orgLogoFile = document.getElementById("orgLogo").files[0]; // File input
+        
+                try {
+                    let logoURL = null;
+        
+                    // Upload the logo to Firebase Storage
+                    if (orgLogoFile) {
+                        const storageRef = ref(storage, `organizer_logos/${orgLogoFile.name}`); // Create storage reference
+                        await uploadBytes(storageRef, orgLogoFile); // Upload file
+                        logoURL = await getDownloadURL(storageRef); // Retrieve the file URL
+                    }
+        
+                    // Add organizer data to Firestore in the "organizer_users" collection
+                    const docRef = await addDoc(collection(db, "organizer_users"), {
+                        organizationName: orgName,
+                        description: orgDescription,
+                        email: email,
+                        contact: contact,
+                        logoURL: logoURL, // Uploaded logo URL
+                        timestamp: new Date()
+                    });
+        
+                    console.log("Document written with ID: ", docRef.id);
+                    alert("Organizer profile registered successfully!");
+        
+                    // Clear the form fields after successful submission
+                    organizerForm.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    alert("Error registering organizer. Please try again.");
+                }
+            });
+        </script>
+        

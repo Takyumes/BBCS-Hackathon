@@ -1,0 +1,260 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : 15 Dec 2024, 11:01:02 pm
+    Author     : Takumi
+*/
+body {
+  margin: 0; /* Remove default margin */
+  height: 100vh; /* Full viewport height */
+  display: flex; /* Use flexbox for simplicity */
+}
+
+.left-half {
+  flex: 1; /* Take up half the width */
+  background-color: #FFB371;
+  display: flex; /* Enable flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.right-half {
+  flex: 1; /* Take up the other half */
+  background-color: #f0f4f9;
+  display: flex; /* Enable flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.center-box {
+  width: 480px;
+  height: 500px;
+  background-color: #F8A3A3; /* Background color for the box */
+  position: relative; /* Make this the reference for positioning elements */
+  display: flex; /* Optional, for additional alignment control */
+  justify-content: center;
+  align-items: flex-end; /* Align items at the bottom */
+  border-radius:15px;
+}
+
+.center-box::after {
+  content: ""; /* Pseudo-element for the image background */
+  position: absolute;
+  bottom: -4.8%; /* Align at the bottom of the box */
+  width: 100%; /* Full width of the box */
+  height: 50%; /* Occupy the bottom half of the box */
+  background: url('https://i.ibb.co/2g9TBYG/raised-hands-512.webp') repeat-x center; /* Image repeats horizontally */
+  background-size: 50%; /* Scale image to repeat exactly twice horizontally */
+  border-radius: 15px;
+}
+
+.slogan {
+  width:400px;
+  top:-5%;
+  left:5%;
+  position: absolute;
+  font-family: "Inter-Bold", Helvetica;
+  font-weight: 700;
+  color: #000000;
+  font-size: 60px;
+}
+
+.subtext {
+  width:410px;
+  top:27%;
+  left:7%;
+  position: absolute;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 35px;
+}
+
+.profile-icon {
+   width: 100px;
+   height: 100px;
+   position: absolute;
+   right: 25%; /* Adjust to center horizontally */
+   transform: translateX(50%); /* Ensure proper centering */
+   top: 25%; /* Place 25% from the top */
+   background-image: url('https://i.ibb.co/WfS28Mz/51669.png'); /* Image URL */
+   background-size: cover; /* Ensure the image fills the container */
+   background-repeat: no-repeat; /* Prevent tiling */
+   background-position: center; /* Center the image inside the box */
+   align-content: center;
+}
+
+.profile-text {
+    width: 280px;
+    height: 60px;
+    position: absolute;
+    top: 100%; /* Place it directly below the icon */
+    left: 50%; /* Center horizontally relative to the container */
+    transform: translateX(-50%); /* Ensure proper centering */
+    font-size: 50px;
+    font-family: "Inria Sans-Regular", Helvetica;
+    font-weight: 400;
+    margin-top: 10px; /* Optional spacing below the icon */
+      
+}
+
+.profile-select {
+    width:700px;
+    height:60px;
+    top: 100%; /* Place it directly below the icon */
+    left: 50%; /* Center horizontally relative to the container */
+    transform: translateX(-50%); /* Ensure proper centering */
+    position: absolute;
+    font-size: 40px;
+    font-family: "Inria Sans-Regular", Helvetica;
+    font-weight: 400;
+    margin-top: 60px; /* Optional spacing below the icon */
+    text-align: center;
+}
+
+.profile-dropdown{
+    width: 300px;
+    height: 45px;
+    background-color: #407cda;
+    border-color:transparent;
+    border-radius: 30px;
+    top: 100%; /* Place it directly below the icon */
+    left: 50%; /* Center horizontally relative to the container */
+    transform: translateX(-50%); /* Ensure proper centering */
+    margin-top: 130px; /* Optional spacing below the icon */
+    text-align: center; /* Center text inside */
+    position: absolute;
+    font-family: "Inter-Bold", Helvetica;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 15px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Optional: subtle shadow */
+}
+
+/* Add a container for the buttons */
+.profile-buttons-container {
+    position: absolute;
+    bottom: 35%; /* 25% from the bottom of the right-half */
+    left: 75%; /* Center horizontally in the right-half */
+    transform: translateX(-50%); /* Center the container */
+    display: flex; /* Enable flexbox for button alignment */
+    gap: 25px; /* Add 25px space between buttons */
+    justify-content: center; /* Ensure buttons are centered horizontally */
+    align-items: center; /* Align buttons vertically (optional) */
+    border-color:transparent;
+}
+
+/* Profile Login Button */
+.profile-login {
+    width: 300px;
+    height: 45px;
+    background-color: #407cda;
+    border-color:transparent;
+    border-radius: 30px;
+    text-align: center;
+    font-family: "Inter-Bold", Helvetica;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 15px;
+    display: flex; /* Enable flexbox for centering text inside the button */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer; /* Add pointer cursor on hover */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Optional: subtle shadow */
+    
+}
+
+/* Profile Register Button */
+.profile-register {
+    width: 300px;
+    height: 45px;
+    background-color: #407cda;
+    border-color:transparent;
+    border-radius: 30px;
+    text-align: center;
+    font-family: "Inter-Bold", Helvetica;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 15px;
+    display: flex; /* Enable flexbox for centering text inside the button */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer; /* Add pointer cursor on hover */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Optional: subtle shadow */
+}
+
+/* Register_Organizer.html STYLES */
+
+.register-text {
+    position: absolute; /* Use absolute positioning */
+    top: 40%; /* Align to the vertical middle */
+    transform: translateY(-50%); /* Adjust for perfect vertical centering */
+    width: 450px; /* Text box width */
+    height: 90px; /* Text box height */
+    font-size: 50px;
+    font-family: "Poppins", Helvetica, sans-serif;
+    font-weight: 400;
+    text-align: left; /* Align text to the left */
+    color: #000; /* Optional: Set text color */
+}
+
+#registrationForm {
+  position: relative; /* Keep relative positioning */
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Align children vertically */
+  justify-content: center; /* Center vertically */
+  align-content: flex-end;
+  padding: 20px;
+  width: 100%; /* Control form box width */
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+}
+
+.form-fields {
+  width: 50%; /* Full width of parent container */
+  height: 45px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 5px;
+  margin: 10px 0; /* Add spacing between inputs */
+  box-sizing: border-box; /* Ensures padding doesn’t increase width */
+  align-self: flex-end;
+}
+
+#description-field{
+    width: 335px; /* Set input width */
+    height: 200px; /* Increase height for better spacing */
+    padding: 10px; /* Add space inside the input around the text */
+    font-size: 18px; /* Make the text inside the input bigger */
+    border: solid black 1px;
+    border-radius: 5px;
+    box-sizing: border-box; /* Ensures padding doesn’t increase width */
+    margin-bottom: 10px;
+}
+
+#submitBtn{
+    width: 150px; /* Match input field width */
+    height: 45px; /* Button height */
+    background-color: #407cda; /* Button color */
+    color: white; /* Text color */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 18px; /* Font size */
+    font-family: "Poppins", Helvetica, sans-serif; /* Font family */
+    font-weight: 400; /* Font weight */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 20px; /* Add spacing from the last input field */
+    align-self: center; /* Center the button horizontally (with flexbox) */
+    display: block; /* Ensure it stays on a new line */ 
+    border:none;
+    position:relative;
+    align-self:flex-end;
+}
+
+button:hover {
+    background-color: #285CA3; /* Darker shade for hover effect */
+}
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Warmth & Care Hub</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css"> 
+    </head>
+    <body>
+        <div class="left-half"> <!--Background splitting for aesthetic-->
+            <div class="center-box">
+                <p class="slogan">Warmth & Care Hub</p>
+                <p class="subtext">Connecting Hearts, Changing Lives</p>
+            </div> <!--Box for slogan-->           
+        </div>
+        <div class="right-half"> <!-- Right side of main login page-->
+            <div class="profile-icon">
+                <div class="profile-text">Profile Login</div>
+                <div class="profile-select">Are you a Volunteer or Organizer?</div>             
+                <select id="profileDropdown" name="profile" class="profile-dropdown">
+                    <option value="" disabled selected>Choose a Profile</option>
+                    <option value="Volunteer">Volunteer</option>
+                    <option value="Organizer">Organizer</option>                        
+                </select>
+            </div>
+            <div class="profile-buttons-container">
+                <button class="profile-login" id="loginBtn">Login</button>
+                <button class="profile-register" id="registerBtn">Register</button>
+            </div>
+        </div> 
+        
+        <!-- JavaScript to handle redirects -->
+        <script>
+            // DOM Elements
+            const profileDropdown = document.getElementById("profileDropdown");
+            const loginBtn = document.getElementById("loginBtn");
+            const registerBtn = document.getElementById("registerBtn");
+
+            // Event Listener for Login Button
+            loginBtn.addEventListener("click", () => {
+                const selectedProfile = profileDropdown.value;
+
+                if (selectedProfile === "Volunteer") {
+                    window.location.href = "Login_Volunteer.html";
+                } else if (selectedProfile === "Organizer") {
+                    window.location.href = "Login_Organizer.html";
+                } else {
+                    alert("Please select a profile type (Volunteer or Organizer) first.");
+                }
+            });
+
+            // Event Listener for Register Button
+            registerBtn.addEventListener("click", () => {
+                const selectedProfile = profileDropdown.value;
+
+                if (selectedProfile === "Volunteer") {
+                    window.location.href = "Register_Volunteer.html";
+                } else if (selectedProfile === "Organizer") {
+                    window.location.href = "Register_Organizer.html";
+                } else {
+                    alert("Please select a profile type (Volunteer or Organizer) first.");
+                }
+            });
+        </script>
+    </body>
+</html>
