@@ -213,6 +213,19 @@ body {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
 }
 
+#loginForm { /* making another id just for more clarity, serves exact same function as registrationForm */
+  position: relative; /* Keep relative positioning */
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Align children vertically */
+  justify-content: center; /* Center vertically */
+  align-content: flex-end;
+  padding: 20px;
+  width: 100%; /* Control form box width */
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+}
+
 .form-fields {
   width: 50%; /* Full width of parent container */
   height: 45px;

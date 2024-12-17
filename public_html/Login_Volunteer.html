@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
 <html>
     <head>
         <title>Warmth & Care Hub</title>
@@ -14,18 +10,71 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <body>
         <div class="left-half"> <!--Background splitting for aesthetic-->
             <div class="center-box">
-                <p class="slogan">Warmth & Care Hub </p>
+                <p class="slogan">Warmth & Care Hub</p>
                 <p class="subtext">Connecting Hearts, Changing Lives</p>
             </div> <!--Box for slogan-->           
         </div>
         <div class="right-half"> <!-- Right side of main login page-->   
-            <div id="registrationForm">                   
-                    <input class="form-fields" type="email" placeholder="Email" >
-                    <input class="form-fields" type="text" placeholder="Password" >
-                    <div class="register-text">Log In into Volunteer Profile             
-                    </div>
-                    <button id="submitBtn" type="submit">Submit</button>    
+            <div id="loginForm">                   
+                <input id="email" class="form-fields" type="email" placeholder="Email" required>
+                <input id="password" class="form-fields" type="text" placeholder="Password" required>
+                <div class="register-text">Log In into Volunteer Profile</div>
+                <button id="submitBtn" class="submit-button" type="submit">Submit</button>    
             </div>
         </div>
+x
+        <!-- Firebase Configuration and Script -->
+        <script type="module">
+            // Import Firebase modules
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+            import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+            // Firebase Configuration
+            const firebaseConfig = { 
+                apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+                authDomain: "warmth-and-care-hub.firebaseapp.com",
+                projectId: "warmth-and-care-hub",
+                storageBucket: "warmth-and-care-hub.appspot.com", 
+                messagingSenderId: "367718144977",
+                appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+                measurementId: "G-5D39RT99NX"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            // Form submission event listener
+            document.getElementById("submitBtn").addEventListener("click", async (e) => {
+                e.preventDefault();
+
+                // Retrieve input values
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
+
+                if (!email || !password) {
+                    alert("Please fill in both email and password fields.");
+                    return;
+                }
+
+                try {
+                    // Query Firestore to check for matching credentials
+                    const q = query(collection(db, "volunteer_users"), where("email", "==", email), where("password", "==", password));
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        // Credentials match
+                        alert("Login successful!");
+                        window.location.href = "volunteer_dashboard.html"; // Redirect to volunteer dashboard
+                    } else {
+                        // No matching credentials found
+                        alert("Invalid email or password. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error logging in: ", error);
+                    alert("Error logging in. Please try again later.");
+                }
+            });
+        </script>
     </body>
 </html>
