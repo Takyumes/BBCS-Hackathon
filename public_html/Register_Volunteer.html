@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Warmth & Care Hub</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css"> 
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="left-half"> <!--Background splitting for aesthetic-->
+            <div class="center-box">
+                <p class="slogan">Warmth & Care Hub</p>
+                <p class="subtext">Connecting Hearts, Changing Lives</p>
+            </div> <!--Box for slogan-->           
+        </div>
+        <div class="right-half"> <!-- Right side of main login page-->    
+                <form id="registrationForm">                
+                    <input id="username" class="form-fields" type="text" placeholder="Userame" required>
+                    <input id="email" class="form-fields" type="email" placeholder="Email" required>
+                    <input id="password" class="form-fields" type="password" placeholder="Password" required> <!-- Password input -->
+                    <input id="contact" class="form-fields" type="text" placeholder="Contact No." required>                   
+                    <select id="region" class="form-fields" required>
+                        <option value="" disabled selected>Select a Region</option>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+                        <option value="East">East</option>
+                        <option value="West">West</option>                            
+                    </select>
+                    <div class="register-text">Register a Volunteer Profile</div>
+                    <button id="submitBtn" type="submit">Submit</button>
+                </form>
+        </div>
+        
+        <!-- Firebase Configuration and Script -->
+        <script type="module">
+            // Import Firebase modules
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+            // Firebase Configuration
+            const firebaseConfig = { 
+                apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+                authDomain: "warmth-and-care-hub.firebaseapp.com",
+                projectId: "warmth-and-care-hub",
+                storageBucket: "warmth-and-care-hub.firebasestorage.app",
+                messagingSenderId: "367718144977",
+                appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+                measurementId: "G-5D39RT99NX"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            // Form submission event listener
+            const registrationForm = document.getElementById("registrationForm");
+
+            registrationForm.addEventListener("submit", async (e) => {
+                e.preventDefault(); // Prevent default form submission
+                
+                // Retrieve input values
+                const username = document.getElementById("username").value;
+                const email = document.getElementById("email").value;
+                const contact = document.getElementById("contact").value;
+                const region = document.getElementById("region").value;
+                const password = document.getElementById("password").value; // Get password value
+
+                try {
+                    // Add data to Firestore in the "volunteer_users" collection
+                    const docRef = await addDoc(collection(db, "volunteer_users"), {
+                        username: username,
+                        email: email,
+                        contact: contact,
+                        region: region,
+                        password: password, // Store password                    
+                    });
+
+                    console.log("Document written with ID: ", docRef.id);
+                    alert("Volunteer profile registered successfully!");
+
+                    // Clear the form fields after successful submission
+                    registrationForm.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    alert("Error registering volunteer. Please try again.");
+                }
+            });
+        </script>
+    </body>
+</html>
