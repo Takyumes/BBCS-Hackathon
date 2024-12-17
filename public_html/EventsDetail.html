@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <link rel="stylesheet" href="EventDetailStyle.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Event Details</h1>
+        <form id="event-details-form">
+            <label for="event-title">Event Title:</label>
+            <input type="text" id="event-title" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" required></textarea>
+
+            <label for="date-time">Date & Time:</label>
+            <input type="datetime-local" id="date-time" required>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" required>
+
+            <label for="volunteers-needed">Volunteers Needed:</label>
+            <input type="number" id="volunteers-needed" required>
+
+            <label for="register_end">Registration End-date:</label>
+            <input type="datetime-local" id="register_end" required>
+
+            <label for="category">Category:</label>
+            <select id="category" class="category_input">
+                <option value="All">All</option>
+                <option value="Food Drive">Food Drive</option>
+                <option value="Shelter Work">Shelter Work</option>
+                <option value="Fundraising">Fundraising</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <label for="sign-up">Sign-up Method:</label>
+            <input type="text" id="signup_method" required>
+
+            <label for="contact">Contact Information:</label>
+            <input type="text" id="contact" required>
+
+            <!-- Event Image Preview -->
+            <div class="image-section">
+                <h3>Event Image</h3>
+                <img id="event-image" src="" alt="Event Image" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-section">
+                <button type="button" id="save-button">Save Changes</button>
+                <button type="button" id="delete-button">Cancel Event</button>
+                <button type="button" id="back-button">Back to Dashboard</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+            authDomain: "warmth-and-care-hub.firebaseapp.com",
+            projectId: "warmth-and-care-hub",
+            storageBucket: "warmth-and-care-hub.firebasestorage.app",
+            messagingSenderId: "367718144977",
+            appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+            measurementId: "G-5D39RT99NX" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fetch Event ID from URL Query Parameters
+        const params = new URLSearchParams(window.location.search); //URLSearchParams extracts id query parameter from the URL
+        const eventId = params.get("id"); //put the id into eventId variable
+
+        const titleInput = document.getElementById("event-title");
+        const descriptionInput = document.getElementById("description");
+        const dateTimeInput = document.getElementById("date-time");
+        const locationInput = document.getElementById("location");
+        const volunteersInput = document.getElementById("volunteers-needed");
+        const registerEndInput = document.getElementById("register_end");
+        const contactInput = document.getElementById("contact");
+        const eventImage = document.getElementById("event-image");
+        const categoryInput = document.getElementById("category");
+        const signupInput = document.getElementById("signup_method");
+
+        // Fetch Event Data
+        async function fetchEventData() {
+            const eventRef = doc(db, "events", eventId);
+            const eventSnap = await getDoc(eventRef); //fetches a single document by its ID.
+
+            if (eventSnap.exists()) { //.exists() is a function to check existence
+                const data = eventSnap.data();
+                titleInput.value = data.title;
+                descriptionInput.value = data.description;
+                dateTimeInput.value = data.event_date;
+                locationInput.value = data.location;
+                volunteersInput.value = data.volunteers;
+                registerEndInput.value = data.register_end;
+                contactInput.value = data.contact;
+                categoryInput.value = data.category;
+                if (data.imageURL) {
+                    eventImage.src = data.imageURL;
+                }
+            } else {
+                alert("Event not found!");
+            }
+        }
+        //addEventListener is used to perform an action when a particular action is exceuted
+        // Save Changes
+        document.getElementById("save-button").addEventListener("click", async () => {
+            const updatedData = {
+                title: titleInput.value,
+                description: descriptionInput.value,
+                event_date: dateTimeInput.value,
+                location: locationInput.value,
+                volunteers: volunteersInput.value,
+                register_end: registerEndInput.value,
+                contact: contactInput.value,
+                category: categoryInput.value,
+                signup: signupInput.value
+            };
+
+            await updateDoc(doc(db, "events", eventId), updatedData); //updateDoc update the document fields in FireStore.
+            //input fields current values are stored in updatedData object and pushed to Firestore
+            alert("Event updated successfully!");
+        });
+
+        // Cancel Event
+        document.getElementById("delete-button").addEventListener("click", async () => {
+            const confirmDelete = confirm("Are you sure you want to cancel this event?");
+            if (confirmDelete) {
+                await deleteDoc(doc(db, "events", eventId)); //deleteDoc() deletes the specified document
+                alert("Event cancelled successfully!");
+                window.location.href = "Dashboard.html";
+            }
+        });
+
+        // Back to Dashboard
+        document.getElementById("back-button").addEventListener("click", () => {
+            window.location.href = "Dashboard.html";
+        });
+
+        fetchEventData();
+    </script>
+</body>
+</html>

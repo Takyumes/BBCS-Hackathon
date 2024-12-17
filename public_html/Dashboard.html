@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Dashboard</title>
+    <link href="Dashboardstyle.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="header">
+        <button class="createEventBtn" onclick="window.location.href='CreateEvent.html'">Create Event</button>
+        
+        <a href="https://www.youtube.com/?app" class="nav-link">MAP/LOCATIONS</a>
+        <div class="account-widget">
+        <span>Welcome, Organizer</span>
+    <button class="img-button" onclick="window.location.href='https://www.youtube.com/?app'">
+        <img src="account.png" alt="Account Icon" class="account-icon"/>
+    </button> </div>
+    </div>
+    <h1>Event Dashboard</h1>
+    <div id="events-list"></div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        //Code above fetches the documents stored in firestore
+
+        // Firebase Configuration
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+            authDomain: "warmth-and-care-hub.firebaseapp.com",
+            projectId: "warmth-and-care-hub",
+            storageBucket: "warmth-and-care-hub.firebasestorage.app",
+            messagingSenderId: "367718144977",
+            appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+            measurementId: "G-5D39RT99NX" };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+
+        // Fetch Events
+        async function loadEvents() {
+            const eventsList = document.getElementById("events-list");
+            const querySnapshot = await getDocs(collection(db, "events"));
+
+            const today = new Date();
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                var registrationDate = data.register_end ? new Date(data.register_end) : null;
+                var eventDate = data.event_date ? new Date(data.event_date) : null;
+                let status= "N/A";
+
+                if (registrationDate && eventDate){
+                    if (today < registrationDate) {
+                        status = "Registration Ongoing";
+                    } else if (today >= registrationDate && today < eventDate) {
+                        status = "Event Upcoming";
+                    } else if (today.getTime() === eventDate.getTime()) {
+                        status = "Event Ongoing";
+                    } else if (today > eventDate) {
+                        status = "Event Completed";
+                    }
+                }
+                const imageURL = data.imageURL || "placeholder.png";
+                const title = data.title;
+                const volunteers = data.volunteers;
+                const eventCard = `
+                <a href="http://localhost/Hackathon/public_html/EventsDetail.html?id=${doc.id}">
+                    <div class="event-card">
+                        <!-- Left Section:Image placeholder-->
+                        <div class="event-image-placeholder">
+                            <img src="${imageURL}" alt="event image">
+                            </div>
+                </a>
+
+                        <!-- Right Section: Event Details -->
+                        <div class="event-details">
+                            <p class="title">${title}</p>
+                            <p>Volunteers Needed: ${volunteers}</p>
+                            <p>Status: ${status}</p>
+                        </div>
+                    </div>
+                `;
+                eventsList.insertAdjacentHTML("beforeend", eventCard);
+            });
+        }
+
+        loadEvents();
+    </script>
+</body>
+</html>
