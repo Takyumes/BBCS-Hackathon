@@ -20,7 +20,7 @@
             <input type="datetime-local" id="date-time" required>
 
             <label for="location">Location:</label>
-            <input type="text" id="location" required>
+            <input type="text" id="address" required>
 
             <label for="volunteers-needed">Volunteers Needed:</label>
             <input type="number" id="volunteers-needed" required>
@@ -84,7 +84,7 @@
         const titleInput = document.getElementById("event-title");
         const descriptionInput = document.getElementById("description");
         const dateTimeInput = document.getElementById("date-time");
-        const locationInput = document.getElementById("location");
+        const addressInput = document.getElementById("address");
         const volunteersInput = document.getElementById("volunteers-needed");
         const registerEndInput = document.getElementById("register_end");
         const contactInput = document.getElementById("contact");
@@ -102,7 +102,7 @@
                 titleInput.value = data.title;
                 descriptionInput.value = data.description;
                 dateTimeInput.value = data.event_date;
-                locationInput.value = data.location;
+                addressInput.value = data.address;
                 volunteersInput.value = data.volunteers;
                 registerEndInput.value = data.register_end;
                 contactInput.value = data.contact;
@@ -121,7 +121,7 @@
                 title: titleInput.value,
                 description: descriptionInput.value,
                 event_date: dateTimeInput.value,
-                location: locationInput.value,
+                address: addressInput.value,
                 volunteers: volunteersInput.value,
                 register_end: registerEndInput.value,
                 contact: contactInput.value,

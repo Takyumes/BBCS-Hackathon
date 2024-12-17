@@ -10,6 +10,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Event</title>
     <link href="CreateEventstyle.css" type="text/css" rel="stylesheet">
+    
     <style>
         input [type="file"]{
             display: none;
@@ -31,7 +32,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                 <input class="form-input" type="datetime-local" id="date-time" placeholder="Enter Event Time" required>
 
                 <label class="form-label" for="location">Location:</label>
-                <input class="form-input" type="text" id="location" placeholder="Enter Location:" required>
+                <input class="form-input" type="text" id="address" placeholder="Enter Location:" required>
 
                 <label class="form-label" for="volunteers-needed">Volunteers Needed:</label>
                 <input class="form-input" type="number" id="volunteers-needed" placeholder="Number of Volunteers" required>
@@ -95,6 +96,31 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        async function getCoordinates(address) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
+                );
+
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    const location = data[0];
+                    const latitude = location.lat;
+                    const longitude = location.lon;
+
+                    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    return { latitude, longitude };
+                } else {
+                    alert("Location not found! Please try a different address.");
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error fetching coordinates:", error);
+                alert("Failed to fetch coordinates.");
+            }
+        }
+
+
         // Handle Form Submission
         document.getElementById("event-form").addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -103,11 +129,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
             const description = document.getElementById("description").value;
             const volunteers = document.getElementById("volunteers-needed").value;
             const event_date = document.getElementById("date-time").value;
-            const location = document.getElementById("location").value;
+            const address = document.getElementById("address").value;
             const register_end = document.getElementById("register_end").value;
             const contact = document.getElementById("contact").value;
             const category = document.getElementById("category").value;
             const signup = document.getElementById("signup_method").value;
+            
+            // Fetch coordinates for the entered address
+            const coordinates = await getCoordinates(address);
+            if (!coordinates) return; // Stop if no coordinates are found
 
             try {
                 console.log({
@@ -115,11 +145,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                     description,
                     volunteers,
                     event_date,
-                    location,
+                    address,
                     register_end,
                     contact,
                     category,
                     signup,
+                    latitude: coordinates.latitude,
+                    longitude:coordinates.longitude,
                     createdAt: new Date()
                 });
 
@@ -129,11 +161,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                     description, 
                     volunteers, 
                     event_date, 
-                    location, 
+                    address, 
                     register_end, 
                     contact, 
                     category,
                     signup,
+                    latitude:coordinates.latitude,
+                    longitude:coordinates.longitude,
                     createdAt: new Date()});
                 //Each entry (eg. title/description) is stored as a document in the Firestore collection/table, a document is a row in a table with a field and a value
 

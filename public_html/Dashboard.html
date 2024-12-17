@@ -16,7 +16,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
     <div class="header">
         <button class="createEventBtn" onclick="window.location.href='CreateEvent.html'">Create Event</button>
         
-        <a href="https://www.youtube.com/?app" class="nav-link">MAP/LOCATIONS</a>
+        <a href="http://localhost//Hackathon/public_html/InteractiveMap.html" class="nav-link">MAP/LOCATIONS</a>
         <div class="account-widget">
         <span>Welcome, Organizer</span>
     <button class="img-button" onclick="window.location.href='https://www.youtube.com/?app'">
@@ -78,7 +78,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                         <div class="event-image-placeholder">
                             <img src="${imageURL}" alt="event image">
                             </div>
-                </a>
+                
 
                         <!-- Right Section: Event Details -->
                         <div class="event-details">
@@ -87,6 +87,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
                             <p>Status: ${status}</p>
                         </div>
                     </div>
+                    </a>
                 `;
                 eventsList.insertAdjacentHTML("beforeend", eventCard);
             });
