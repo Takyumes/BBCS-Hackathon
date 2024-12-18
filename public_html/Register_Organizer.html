@@ -61,6 +61,7 @@
                 const email = document.getElementById("email").value;
                 const contact = document.getElementById("contact").value;
                 const logoURL = document.getElementById("orgLogo").value; // Retrieve the Logo URL text input
+                const password = document.getElementById("password").value;
         
                 try {
                     // Add organizer data to Firestore in the "organizer_users" collection
@@ -69,7 +70,8 @@
                         description: orgDescription,
                         email: email,
                         contact: contact,
-                        logoURL: logoURL, // Store text URL directly                       
+                        logoURL: logoURL, // Store text URL directly 
+                        password: password,                      
                     });
         
                     console.log("Document written with ID: ", docRef.id);

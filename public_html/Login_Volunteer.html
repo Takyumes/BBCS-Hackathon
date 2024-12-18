@@ -22,7 +22,7 @@
                 <button id="submitBtn" class="submit-button" type="submit">Submit</button>    
             </div>
         </div>
-x
+
         <!-- Firebase Configuration and Script -->
         <script type="module">
             // Import Firebase modules
@@ -65,7 +65,12 @@ x
                     if (!querySnapshot.empty) {
                         // Credentials match
                         alert("Login successful!");
-                        window.location.href = "EventDiscovery(Volunteer).html"; // Redirect to volunteer dashboard
+
+                        // Save email to localStorage
+                        localStorage.setItem("loggedInVolunteerEmail", email);
+
+                        // Redirect to volunteer dashboard
+                        window.location.href = "EventDiscovery(Volunteer).html";
                     } else {
                         // No matching credentials found
                         alert("Invalid email or password. Please try again.");

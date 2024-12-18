@@ -46,35 +46,36 @@
 
             // Form submission event listener
             document.getElementById("submitBtn").addEventListener("click", async (e) => {
-                e.preventDefault();
+            e.preventDefault();
 
-                // Retrieve input values
-                const email = document.getElementById("email").value.trim();
-                const password = document.getElementById("password").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
 
-                if (!email || !password) {
-                    alert("Please fill in both email and password fields.");
-                    return;
+            if (!email || !password) {
+                alert("Please fill in both email and password fields.");
+                return;
+            }
+
+            try {
+                const q = query(collection(db, "organizer_users"), where("email", "==", email), where("password", "==", password));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    // Save email to localStorage
+                    localStorage.setItem("loggedInEmail", email);
+
+                    // Redirect to dashboard
+                    alert("Login successful!");
+                    window.location.href = "OrganizerDashboard.html";
+                } else {
+                    alert("Invalid email or password. Please try again.");
                 }
+            } catch (error) {
+                console.error("Error logging in: ", error);
+                alert("Error logging in. Please try again later.");
+            }
+        });
 
-                try {
-                    // Query Firestore to check for matching credentials
-                    const q = query(collection(db, "organizer_users"), where("email", "==", email), where("password", "==", password));
-                    const querySnapshot = await getDocs(q);
-
-                    if (!querySnapshot.empty) {
-                        // Credentials match
-                        alert("Login successful!");
-                        window.location.href = "OrganizerDashboard.html"; // Redirect to dashboard page
-                    } else {
-                        // No matching credentials found
-                        alert("Invalid email or password. Please try again.");
-                    }
-                } catch (error) {
-                    console.error("Error logging in: ", error);
-                    alert("Error logging in. Please try again later.");
-                }
-            });
         </script>
     </body>
 </html>
