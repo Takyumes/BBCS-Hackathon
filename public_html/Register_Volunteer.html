@@ -78,12 +78,14 @@
 
                     console.log("Document written with ID: ", docRef.id);
                     alert("Volunteer profile registered successfully!");
+                    window.location.href = "Login_Volunteer.html";
 
                     // Clear the form fields after successful submission
                     registrationForm.reset();
                 } catch (error) {
                     console.error("Error adding document: ", error);
                     alert("Error registering volunteer. Please try again.");
+                    registrationForm.reset();
                 }
             });
         </script>
