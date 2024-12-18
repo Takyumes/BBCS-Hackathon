@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Dashboard</title>
+    <link href="Dashboardstyle.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="header">
+        <button class="createEventBtn" onclick="window.location.href='CreateEvent.html'">Create Event</button>
+        <a href="http://localhost/Hackathon/public_html/InteractiveMap.html" class="nav-link">MAP/LOCATIONS</a>
+        <div class="account-widget">
+            <span id="welcomeMessage">Welcome, Organizer</span>
+            <button class="img-button" onclick="window.location.href='https://www.youtube.com/?app'">
+                <img src="account.png" alt="Account Icon" class="account-icon"/>
+            </button>
+        </div>
+    </div>
+    <h1>Event Dashboard</h1>
+    <div id="events-list"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+            authDomain: "warmth-and-care-hub.firebaseapp.com",
+            projectId: "warmth-and-care-hub",
+            storageBucket: "warmth-and-care-hub.appspot.com", 
+            messagingSenderId: "367718144977",
+            appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+            measurementId: "G-5D39RT99NX" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to update the Welcome Message
+        async function updateWelcomeMessage() {
+        const welcomeMessage = document.getElementById("welcomeMessage");
+
+        // Retrieve the logged-in user's email from localStorage
+        const loggedInEmail = localStorage.getItem("loggedInEmail");
+
+        if (!loggedInEmail) {
+            alert("No user is logged in.");
+            return;
+        }
+
+        try {
+            // Query Firestore for the user's organizationName
+            const q = query(collection(db, "organizer_users"), where("email", "==", loggedInEmail));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0];
+                const data = doc.data();
+
+                // Update the Welcome Message
+                welcomeMessage.textContent = `Welcome, ${data.organizationName}`;
+            } else {
+                alert("Organizer not found in the database.");
+            }
+        } catch (error) {
+            console.error("Error fetching organizer name: ", error);
+            alert("An error occurred while fetching your profile information.");
+        }
+    }
+
+
+        // Call the function to update the Welcome Message
+        updateWelcomeMessage();
+    </script>
+</body>
+</html>

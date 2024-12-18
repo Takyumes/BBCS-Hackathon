@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <style>
+        .map-container{
+            display: flex;
+            justify-content: center; /* Centers content horizontally */
+            align-items: center;
+            width: 100%; /* Takes full width */
+            margin: 0 auto;
+        }
+        #map {
+            height: 600px; /* Adjust height of the map */
+            width: 80%; /* Adjust width to control size */
+            border: 2px solid #000; /* Optional: Add a border to the map */
+            border-radius: 10px; /* Optional: Rounded edges */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for visual appeal */
+        }
+        .header{
+            display: flex;                /* Enables Flexbox */
+            align-items: center;          /* Vertically center items */
+            padding: 10px 30px;           /* Add spacing around the header */
+            background-color: #f6a192;    /* Header background color */
+            border-bottom: 3px solid #b64d3b;
+            font-family: Arial, sans-serif;
+            gap: 650px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+        }
+        /* Navigation Links */
+        .nav-links {
+            display: flex;
+            background-color: #f6a192;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #333;
+            font-size: 30px;
+            
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #000;
+            text-decoration: underline;
+        }
+        h1{
+            font-family: Helvetica;
+            text-align: center;
+        }
+        body{
+            background-color: #973e2e;
+        }
+        /* Account Widget */
+        .account-widget {
+            display: flex;
+            align-items: center;
+            gap: 4px;                    /* Space between text and icon */
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;           /* Circular image */
+            background-color: #ccc;       /* Placeholder background */
+            object-fit: cover;            /* Maintain image proportions */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="http://localhost//Hackathon/public_html/Dashboard.html" class="nav-link">DASHBOARD</a> <!--links to the Dashboard page-->
+
+        <div class="account-widget">
+    <button class="img-button" onclick="window.location.href='https://www.youtube.com/?app'">
+        <img src="account.png" alt="Account Icon" class="account-icon"/>
+    </button> </div>
+    </div>
+    <h1>Interactive Map of Food Banks, Donation Centers, and Events</h1>
+    <!-- Map Container -->
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+
+    <!-- Firebase and Leaflet Scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+            authDomain: "warmth-and-care-hub.firebaseapp.com",
+            projectId: "warmth-and-care-hub",
+            storageBucket: "warmth-and-care-hub.firebasestorage.app",
+            messagingSenderId: "367718144977",
+            appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+            measurementId: "G-5D39RT99NX",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadMap() {
+            const map = L.map("map").setView([1.3521, 103.8198], 12); // Default center: Singapore
+
+            // Load OpenStreetMap tiles
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 18,
+                attribution: "© OpenStreetMap"
+            }).addTo(map);
+
+            // Fetch events and add markers
+            const querySnapshot = await getDocs(collection(db, "events"));
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.latitude && data.longitude) {
+                    L.marker([data.latitude, data.longitude])
+                        .addTo(map)
+                        .bindPopup(`<b>${data.title}</b><br>${data.description}`)
+                        .openPopup();
+                }
+            });
+        }
+
+        loadMap();
+    </script>
+</body>
+</html>

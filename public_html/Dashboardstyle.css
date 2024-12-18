@@ -1,0 +1,162 @@
+/* Header Styling */
+.header {
+    display: flex;                /* Enables Flexbox */
+    align-items: center;          /* Vertically center items */
+    padding: 10px 30px;           /* Add spacing around the header */
+    background-color: #f6a192;    /* Header background color */
+    border-bottom: 3px solid #b64d3b;
+    font-family: Arial, sans-serif;
+    gap: 650px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+}
+
+/* Create Event Button */
+.createEventBtn {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 20px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.createEventBtn:hover {
+    background-color: #0a66c2;
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    background-color: #f6a192;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+    
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Account Widget */
+.account-widget {
+    display: flex;
+    align-items: center;
+    gap: 4px;                    /* Space between text and icon */
+}
+
+.account-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;           /* Circular image */
+    background-color: #ccc;       /* Placeholder background */
+    object-fit: cover;            /* Maintain image proportions */
+}
+.img-button{
+    background-color: transparent;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items: center;
+}
+
+
+body {
+    background-color: #923B3B;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+.title{
+    font-size: 25px;
+    font-weight: bold;
+}
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-weight: bolder;
+    font-size: 80px;
+}
+#events-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+.event-card {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    align-items: center;
+    display: flex;
+    padding: 15px;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.event-image-placeholder{
+    background-color: #bcbcbc;
+    width: 220px;
+    height: auto;
+    flex-shrink:0;
+    overflow:hidden;
+}
+.event-image-placeholder img{
+    width: 100%;
+    height:100%;
+    object-fit:cover;
+    border-radius: 5px;
+}
+.event-details{
+    padding:10px 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.event-details h3{
+    margin:0;
+    font-size: 18px;
+    font-weight: bold;
+}
+.event-details p{
+    margin: 5px 0;
+    color: #333;
+}
+.event-details p.status{
+    font-weight: bold;
+    color:#000;
+}
+.filters {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+    border: 2px solid black;
+    border-radius: 20px;
+    max-width: 90%;
+    margin: auto;
+    padding: 20px;
+}
+
+.filters label {
+    font-size: 40px;
+    margin-right: 5px;
+}
+
+.filters select, .filters input, .filters button {
+    padding: 5px;
+    font-size: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

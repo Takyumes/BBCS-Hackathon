@@ -20,7 +20,8 @@
                     <input id="orgDescription" class="form-fields" type="text" placeholder="Organization Description" required>
                     <input id="email" class="form-fields" type="email" placeholder="Email" required>
                     <input id="contact" class="form-fields" type="text" placeholder="Contact No." required>
-                    <input id="orgLogo" class="form-fields" type="file" accept="image/*" required> <!-- Image upload -->
+                    <input id="orgLogo" class="form-fields" type="text" placeholder="Logo URL (e.g., https://example.com/logo.png)" required>
+                    <input id="password" class="form-fields" type="text" placeholder="Password" required>
 
                     <div class="register-text">Register an Organizer Profile</div>
                     <button id="submitBtn" class="submit-button" type="submit">Submit</button>
@@ -32,7 +33,6 @@
             // Import Firebase modules
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
             import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
         
             // Firebase Configuration
             const firebaseConfig = { 
@@ -48,8 +48,7 @@
             // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            const storage = getStorage(app);
-        
+
             // Form submission event listener
             const organizerForm = document.getElementById("registrationForm");
         
@@ -61,31 +60,23 @@
                 const orgDescription = document.getElementById("orgDescription").value;
                 const email = document.getElementById("email").value;
                 const contact = document.getElementById("contact").value;
-                const orgLogoFile = document.getElementById("orgLogo").files[0]; // File input
+                const logoURL = document.getElementById("orgLogo").value; // Retrieve the Logo URL text input
+                const password = document.getElementById("password").value;
         
                 try {
-                    let logoURL = null;
-        
-                    // Upload the logo to Firebase Storage
-                    if (orgLogoFile) {
-                        const storageRef = ref(storage, `organizer_logos/${orgLogoFile.name}`); // Create storage reference
-                        await uploadBytes(storageRef, orgLogoFile); // Upload file
-                        logoURL = await getDownloadURL(storageRef); // Retrieve the file URL
-                    }
-        
                     // Add organizer data to Firestore in the "organizer_users" collection
                     const docRef = await addDoc(collection(db, "organizer_users"), {
                         organizationName: orgName,
                         description: orgDescription,
                         email: email,
                         contact: contact,
-                        logoURL: logoURL, // Uploaded logo URL
-                        timestamp: new Date()
+                        logoURL: logoURL, // Store text URL directly 
+                        password: password,                      
                     });
         
                     console.log("Document written with ID: ", docRef.id);
                     alert("Organizer profile registered successfully!");
-        
+
                     // Clear the form fields after successful submission
                     organizerForm.reset();
                 } catch (error) {
@@ -94,4 +85,5 @@
                 }
             });
         </script>
-        
+    </body>
+</html>

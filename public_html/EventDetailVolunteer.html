@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <link rel="stylesheet" href="EventDetailStyle.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Event Details</h1>
+        <div id="event-details"></div>
+        <button id="back-button">Back to Events</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+            authDomain: "warmth-and-care-hub.firebaseapp.com",
+            projectId: "warmth-and-care-hub",
+            storageBucket: "warmth-and-care-hub.firebasestorage.app",
+            messagingSenderId: "367718144977",
+            appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+            measurementId: "G-5D39RT99NX" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fetch Event ID from URL
+        const params = new URLSearchParams(window.location.search);
+        const eventId = params.get("id");
+
+        async function loadEventDetails() {
+            const eventRef = doc(db, "events", eventId);
+            const eventSnap = await getDoc(eventRef);
+
+            if (eventSnap.exists()) {
+                const data = eventSnap.data();
+                document.getElementById("event-details").innerHTML = `
+                    <h2>${data.title}</h2>
+                    <p><strong>Description:</strong> ${data.description}</p>
+                    <p><strong>Date & Time:</strong> ${data.event_date}</p>
+                    <p><strong>Location:</strong> ${data.address}</p>
+                    <p><strong>Volunteers Needed:</strong> ${data.volunteers}</p>
+                    <p><strong>Registration End:</strong> ${data.register_end}</p>
+                    <p><strong>Category:</strong> ${data.category}</p>
+                    <p><strong>Sign-up Method:</strong> ${data.signup}</p>
+                    <img src="${data.imageURL || 'placeholder.png'}" alt="Event Image" width="300">
+                `;
+            } else {
+                document.getElementById("event-details").innerText = "Event not found.";
+            }
+        }
+
+        document.getElementById("back-button").addEventListener("click", () => {
+            window.location.href = "EventDiscovery(Volunteer).html";
+        });
+
+        loadEventDetails();
+    </script>
+</body>
+</html>
