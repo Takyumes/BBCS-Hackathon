@@ -32,7 +32,7 @@ Follow the steps below to access and run the project:
 Use the following Git command to clone the repository:
 ```bash
 git clone https://github.com/your-username/Warmth-and-Care-Hub.git
-
+```
 ### **2. Set Up Firebase**
 To run this project locally or deploy it, follow these steps:
 
@@ -49,14 +49,16 @@ To run this project locally or deploy it, follow these steps:
 
 4. Replace Firebase Configuration: Replace the Firebase configuration in all .html and script files:
 
-`const firebaseConfig = {
+```bash
+const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_AUTH_DOMAIN",
     projectId: "YOUR_PROJECT_ID",
     storageBucket: "YOUR_STORAGE_BUCKET",
     messagingSenderId: "YOUR_MESSAGING_ID",
     appId: "YOUR_APP_ID"
-};`
+};
+```
 
 5. Run the Project: 
 Use a local server to test the project (e.g., VS Code Live Server or npx http-server).
