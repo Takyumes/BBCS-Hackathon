@@ -1,0 +1,90 @@
+.header {
+    display: flex;                /* Enables Flexbox */
+    align-items: center;          /* Vertically center items */
+    padding: 10px 30px;           /* Add spacing around the header */
+    background-color: #f6a192;    /* Header background color */
+    border-bottom: 3px solid #b64d3b;
+    font-family: Arial, sans-serif;
+    gap: 650px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+}
+.account-widget {
+    display: flex;
+    align-items: center;
+    gap: 4px;                    /* Space between text and icon */
+}
+
+.account-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;           /* Circular image */
+    background-color: #ccc;       /* Placeholder background */
+    object-fit: cover;            /* Maintain image proportions */
+}
+.img-button{
+    background-color: transparent;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items: center;
+}
+body {
+    background-color: #f0f4f9;
+}
+
+.detail-bg {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    min-height: 70%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+}
+
+.detail-section {
+    background-color: #D9D9D9;
+    font-size: 35px;
+    font-weight: 400;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.details-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+}
+
+.field-column, .value-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px; /* 20px spacing between fields */
+}
+
+.field, .value {
+    height: 45px;
+    line-height: 45px;
+    font-size: 18px;
+    font-weight: 400;
+    background-color: #f2f2f2; /* Light grey background for fields */
+    padding: 0 10px; /* Padding inside fields */
+    box-sizing: border-box;
+}
+
+.field {
+    text-align: left;
+}
+
+.value {
+    text-align: left;
+    background-color: #e0e0e0; /* Slightly darker grey for values */
+    border: 1px solid #dcdcdc;
+}

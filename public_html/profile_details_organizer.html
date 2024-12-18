@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Profile</title>
+    <link href="profiledetails.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <a href="http://localhost//Hackathon/public_html/InteractiveMap.html" class="nav-link">MAP/LOCATIONS</a>
+        <div class="account-widget">
+            <span id="welcomeMessage">Welcome, Organizer</span>
+            <button class="img-button" onclick="window.location.href='organizer_profile_details.html'">
+                <img src="account.png" alt="Account Icon" class="account-icon"/>
+            </button>
+        </div>
+    </div>
+
+    <!-- Profile Details Section -->
+    <div class="detail-bg">
+        <div class="detail-section">Profile [Organizer]</div>
+        <div class="details-container">
+            <div class="field-column">
+                <div class="field">Organization Name</div>
+                <div class="field">Description</div>
+                <div class="field">Password</div>
+                <div class="field">Email</div>
+                <div class="field">Contact</div>
+                <div class="field">Logo URL</div>
+            </div>
+            <div class="value-column">
+                <div id="organizationName" class="value"></div>
+                <div id="description" class="value"></div>
+                <div id="password" class="value"></div>
+                <div id="email" class="value"></div>
+                <div id="contact" class="value"></div>
+                <div id="logoURL" class="value"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration and Script -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
+            authDomain: "warmth-and-care-hub.firebaseapp.com",
+            projectId: "warmth-and-care-hub",
+            storageBucket: "warmth-and-care-hub.appspot.com", 
+            messagingSenderId: "367718144977",
+            appId: "1:367718144977:web:a814f539c1d224580c1ef0",
+            measurementId: "G-5D39RT99NX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to Fetch and Display Organizer Data
+        async function loadOrganizerProfile() {
+            // Retrieve logged-in email from localStorage
+            const loggedInEmail = localStorage.getItem("loggedInOrganizerEmail");
+
+            if (!loggedInEmail) {
+                alert("No user is logged in. Please log in first.");
+                return;
+            }
+
+            try {
+                // Query Firestore for the organizer with the logged-in email
+                const q = query(collection(db, "organizer_users"), where("email", "==", loggedInEmail));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const organizerData = querySnapshot.docs[0].data();
+
+                    // Populate values into the corresponding fields
+                    document.getElementById("organizationName").textContent = organizerData.organizationName || "N/A";
+                    document.getElementById("description").textContent = organizerData.description || "N/A";
+                    document.getElementById("password").textContent = organizerData.password || "N/A"; // For display purposes; consider encryption for production.
+                    document.getElementById("email").textContent = organizerData.email || "N/A";
+                    document.getElementById("contact").textContent = organizerData.contact || "N/A";
+                    document.getElementById("logoURL").textContent = organizerData.logoURL || "N/A";
+
+                    // Update Welcome Message
+                    document.getElementById("welcomeMessage").textContent = `Welcome, ${organizerData.organizationName}`;
+                } else {
+                    alert("Organizer profile not found.");
+                }
+            } catch (error) {
+                console.error("Error fetching organizer data: ", error);
+                alert("An error occurred while fetching your profile. Please try again.");
+            }
+        }
+
+        // Call the function to load organizer data
+        loadOrganizerProfile();
+    </script>
+</body>
+</html>
