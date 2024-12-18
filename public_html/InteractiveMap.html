@@ -121,10 +121,28 @@
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 if (data.latitude && data.longitude) {
-                    L.marker([data.latitude, data.longitude])
-                        .addTo(map)
-                        .bindPopup(`<b>${data.title}</b><br>${data.description}`)
-                        .openPopup();
+                // Start building the popup content
+                let popupContent = `<b>${data.title}</b><br>
+                                    <strong>Description:</strong> ${data.description}<br>`;
+
+                if (data.type !== undefined) {
+                    popupContent += `<strong>Type:</strong> ${data.type}<br>`;
+                }
+                
+                if (data.event_date !== undefined) {
+                    popupContent += `<strong>Date:</strong> ${data.event_date}<br>`;
+                }
+
+                // Add the Volunteers field only if it exists
+                if (data.volunteers !== undefined) {
+                    popupContent += `<strong>Volunteers:</strong> ${data.volunteers}<br>`;
+                }
+
+                // Add the marker and bind the dynamically built popup
+                L.marker([data.latitude, data.longitude])
+                    .addTo(map)
+                    .bindPopup(popupContent)
+                    .openPopup();
                 }
             });
         }
