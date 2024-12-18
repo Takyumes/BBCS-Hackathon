@@ -140,13 +140,13 @@
             if (confirmDelete) {
                 await deleteDoc(doc(db, "events", eventId)); //deleteDoc() deletes the specified document
                 alert("Event cancelled successfully!");
-                window.location.href = "Dashboard.html";
+                window.location.href = "OrganizerDashboard.html";
             }
         });
 
         // Back to Dashboard
         document.getElementById("back-button").addEventListener("click", () => {
-            window.location.href = "Dashboard.html";
+            window.location.href = "OrganizerDashboard.html";
         });
 
         fetchEventData();
