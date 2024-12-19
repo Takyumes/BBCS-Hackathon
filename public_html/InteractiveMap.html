@@ -6,88 +6,76 @@
     <title>Interactive Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <style>
-        .map-container{
+        .map-container {
             display: flex;
-            justify-content: center; /* Centers content horizontally */
+            justify-content: center;
             align-items: center;
-            width: 100%; /* Takes full width */
+            width: 100%;
             margin: 0 auto;
         }
         #map {
-            height: 600px; /* Adjust height of the map */
-            width: 80%; /* Adjust width to control size */
-            border: 2px solid #000; /* Optional: Add a border to the map */
-            border-radius: 10px; /* Optional: Rounded edges */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for visual appeal */
+            height: 600px;
+            width: 80%;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
-        .header{
-            display: flex;                /* Enables Flexbox */
-            align-items: center;          /* Vertically center items */
-            padding: 10px 30px;           /* Add spacing around the header */
-            background-color: #f6a192;    /* Header background color */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px 30px;
+            background-color: #f6a192;
             border-bottom: 3px solid #b64d3b;
             font-family: Arial, sans-serif;
             gap: 650px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        /* Navigation Links */
-        .nav-links {
-            display: flex;
-            background-color: #f6a192;
-        }
-
-        .nav-links a {
+        .nav-link {
             text-decoration: none;
             font-weight: bold;
             color: #333;
             font-size: 30px;
-            
         }
-        .nav-links a:hover,
-        .nav-links a.active {
+        .nav-link:hover, .nav-link.active {
             color: #000;
             text-decoration: underline;
         }
-        h1{
+        h1 {
             font-family: Helvetica;
             text-align: center;
         }
-        body{
+        body {
             background-color: #973e2e;
         }
-        /* Account Widget */
         .account-widget {
             display: flex;
             align-items: center;
-            gap: 4px;                    /* Space between text and icon */
+            gap: 4px;
         }
-
         .account-icon {
             width: 40px;
             height: 40px;
-            border-radius: 50%;           /* Circular image */
-            background-color: #ccc;       /* Placeholder background */
-            object-fit: cover;            /* Maintain image proportions */
+            border-radius: 50%;
+            background-color: #ccc;
+            object-fit: cover;
         }
-        
     </style>
 </head>
 <body>
     <div class="header">
-        <a href="http://localhost//Hackathon/public_html/OrganizerDashboard.html" class="nav-link">DASHBOARD</a> <!--links to the Dashboard page-->
+        <a id="dashboardLink" href="#" class="nav-link">DASHBOARD</a>
 
         <div class="account-widget">
-    <button class="img-button" onclick="window.location.href='https://www.youtube.com/?app'">
-        <img src="account.png" alt="Account Icon" class="account-icon"/>
-    </button> </div>
+            <button class="img-button" onclick="window.location.href='profile_details.html'">
+                <img src="account.png" alt="Account Icon" class="account-icon"/>
+            </button>
+        </div>
     </div>
     <h1>Interactive Map of Food Banks, Donation Centers, and Events</h1>
-    <!-- Map Container -->
     <div class="map-container">
         <div id="map"></div>
     </div>
 
-    <!-- Firebase and Leaflet Scripts -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -98,7 +86,7 @@
             apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
             authDomain: "warmth-and-care-hub.firebaseapp.com",
             projectId: "warmth-and-care-hub",
-            storageBucket: "warmth-and-care-hub.firebasestorage.app",
+            storageBucket: "warmth-and-care-hub.appspot.com",
             messagingSenderId: "367718144977",
             appId: "1:367718144977:web:a814f539c1d224580c1ef0",
             measurementId: "G-5D39RT99NX",
@@ -107,6 +95,21 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Function to dynamically set the dashboard link to the referring page
+        function setDashboardLink() {
+            const dashboardLink = document.getElementById("dashboardLink");
+            const referrer = document.referrer; // Get the URL of the referring page
+
+            if (referrer) {
+                // Set the dashboard link to the referring page
+                dashboardLink.href = referrer;
+            } else {
+                // Default behavior if there's no referrer (e.g., direct access to the page)
+                dashboardLink.href = "Login.html";
+            }
+        }
+
+        // Initialize Map
         async function loadMap() {
             const map = L.map("map").setView([1.3521, 103.8198], 12); // Default center: Singapore
 
@@ -121,33 +124,23 @@
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 if (data.latitude && data.longitude) {
-                // Start building the popup content
-                let popupContent = `<b>${data.title}</b><br>
-                                    <strong>Description:</strong> ${data.description}<br>`;
-
-                if (data.type !== undefined) {
-                    popupContent += `<strong>Type:</strong> ${data.type}<br>`;
-                }
-                
-                if (data.event_date !== undefined) {
-                    popupContent += `<strong>Date:</strong> ${data.event_date}<br>`;
-                }
-
-                // Add the Volunteers field only if it exists
-                if (data.volunteers !== undefined) {
-                    popupContent += `<strong>Volunteers:</strong> ${data.volunteers}<br>`;
-                }
-
-                // Add the marker and bind the dynamically built popup
-                L.marker([data.latitude, data.longitude])
-                    .addTo(map)
-                    .bindPopup(popupContent)
-                    .openPopup();
+                    const popupContent = `
+                        <b>${data.title}</b><br>
+                        <strong>Description:</strong> ${data.description || "N/A"}<br>
+                        <strong>Type:</strong> ${data.type || "N/A"}<br>
+                        <strong>Date:</strong> ${data.event_date || "N/A"}<br>
+                        <strong>Volunteers:</strong> ${data.volunteers || "N/A"}
+                    `;
+                    L.marker([data.latitude, data.longitude])
+                        .addTo(map)
+                        .bindPopup(popupContent);
                 }
             });
         }
 
-        loadMap();
+        // Run the logic and initialize map
+        setDashboardLink();
+        await loadMap();
     </script>
 </body>
 </html>

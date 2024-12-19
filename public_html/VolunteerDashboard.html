@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="header">
-        <a href="http://localhost//Hackathon/public_html/InteractiveMap.html" class="nav-link">MAP/LOCATIONS</a> <!--links to the Maps/Location page-->
+        <a href="http://localhost//Hackathon/public_html/InteractiveMap.html" class="nav-link">MAP/LOCATIONS</a>
 
         <div class="account-widget">
             <span id="welcomeMessage">Welcome, Volunteer</span>
@@ -19,7 +19,6 @@
     </div>
     <h1>Event Dashboard to Volunteer at</h1>
     <div class="filters">
-        <!-- Category Filter -->
         <label for="category-filter">Category:</label>
         <select id="category-filter">
             <option value="All">All</option>
@@ -29,20 +28,16 @@
             <option value="Others">Others</option>
         </select>
 
-        <!-- Date Filter -->
         <label for="date-filter">Date:</label>
         <input type="date" id="date-filter">
-
-        <!-- Apply Filter Button -->
         <button id="apply-filter">Apply Filters</button>
     </div>
     <div id="events-list"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        // Firebase Configuration
         const firebaseConfig = { 
             apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
             authDomain: "warmth-and-care-hub.firebaseapp.com",
@@ -58,35 +53,42 @@
 
         // Function to Update Welcome Message
         async function updateWelcomeMessage() {
-            const welcomeMessage = document.getElementById("welcomeMessage");
+        const welcomeMessage = document.getElementById("welcomeMessage");
 
-            // Retrieve the logged-in user's email from localStorage
-            const loggedInEmail = localStorage.getItem("loggedInVolunteerEmail");
+        // Retrieve the logged-in user's document ID from localStorage
+        const loggedInVolunteerId = localStorage.getItem("loggedInVolunteerId");
 
-            if (!loggedInEmail) {
-                alert("No user is logged in.");
-                return;
-            }
-
-            try {
-                // Query Firestore for the logged-in user's details
-                const q = query(collection(db, "volunteer_users"), where("email", "==", loggedInEmail));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    const doc = querySnapshot.docs[0];
-                    const data = doc.data();
-
-                    // Update the Welcome Message
-                    welcomeMessage.textContent = `Welcome, ${data.username}`;
-                } else {
-                    alert("Volunteer not found in the database.");
-                }
-            } catch (error) {
-                console.error("Error fetching volunteer details: ", error);
-                alert("An error occurred while fetching your profile information.");
-            }
+        if (!loggedInVolunteerId) {
+            alert("No user is logged in. Redirecting to login page...");
+            window.location.href = "Login_Volunteer.html";
+            return;
         }
+
+        console.log("Retrieved Volunteer Document ID:", loggedInVolunteerId); // Debugging
+
+        try {
+            // Fetch the document from Firestore using the document ID
+            const volunteerDocRef = doc(db, "volunteer_users", loggedInVolunteerId);
+            const volunteerDoc = await getDoc(volunteerDocRef);
+
+            if (volunteerDoc.exists()) {
+                const data = volunteerDoc.data();
+                console.log("Fetched Document Data:", data); // Debugging
+
+                // Update the Welcome Message
+                welcomeMessage.textContent = `Welcome, ${data.username}`;
+            } else {
+                console.error("No document found with ID:", loggedInVolunteerId); // Debugging
+                alert("Volunteer profile not found. Redirecting to login page...");
+                window.location.href = "Login_Volunteer.html";
+            }
+        } catch (error) {
+            console.error("Error fetching volunteer details:", error); // Debugging
+            alert("An error occurred while fetching your profile. Redirecting to login page...");
+            window.location.href = "Login_Volunteer.html";
+        }
+    }
+
 
         // Fetch and Display Events
         async function loadEvents() {
@@ -104,9 +106,7 @@
                 const registrationDate = data.register_end ? new Date(data.register_end) : null;
                 const eventDate = data.event_date ? new Date(data.event_date) : null;
 
-                // Filter by category
                 if (categoryFilter !== "All" && data.category !== categoryFilter) return;
-                // Filter by date
                 if (dateFilter && (!eventDate || eventDate.toISOString().split("T")[0] !== dateFilter)) return;
 
                 let status = "N/A";

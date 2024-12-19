@@ -8,10 +8,10 @@
 </head>
 <body>
     <div class="header">
-        <a href="http://localhost//Hackathon/public_html/InteractiveMap.html" class="nav-link">MAP/LOCATIONS</a>
+        <a href="VolunteerDashboard.html" class="nav-link">DASHBOARD</a>
         <div class="account-widget">
             <span id="welcomeMessage">Welcome, Volunteer</span>
-            <button class="img-button" onclick="window.location.href='profile_details.html'">
+            <button class="img-button" onclick="window.location.href='profile_details_volunteer.html'">
                 <img src="account.png" alt="Account Icon" class="account-icon"/>
             </button>
         </div>
@@ -42,7 +42,7 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         // Firebase Configuration
         const firebaseConfig = { 
@@ -61,21 +61,22 @@
 
         // Function to Fetch and Display Volunteer Data
         async function loadVolunteerProfile() {
-            // Retrieve logged-in email from localStorage
-            const loggedInEmail = localStorage.getItem("loggedInVolunteerEmail");
+            // Retrieve logged-in volunteer ID from localStorage
+            const loggedInVolunteerId = localStorage.getItem("loggedInVolunteerId");
 
-            if (!loggedInEmail) {
+            if (!loggedInVolunteerId) {
                 alert("No user is logged in. Please log in first.");
+                window.location.href = "Login_Volunteer.html"; // Redirect to login if no user is logged in
                 return;
             }
 
             try {
-                // Query Firestore for the volunteer with the logged-in email
-                const q = query(collection(db, "volunteer_users"), where("email", "==", loggedInEmail));
-                const querySnapshot = await getDocs(q);
+                // Fetch volunteer document by ID
+                const volunteerDocRef = doc(db, "volunteer_users", loggedInVolunteerId);
+                const volunteerDoc = await getDoc(volunteerDocRef);
 
-                if (!querySnapshot.empty) {
-                    const volunteerData = querySnapshot.docs[0].data();
+                if (volunteerDoc.exists()) {
+                    const volunteerData = volunteerDoc.data();
 
                     // Populate values into the corresponding fields
                     document.getElementById("username").textContent = volunteerData.username || "N/A";

@@ -58,27 +58,26 @@
                 }
 
                 try {
-                    // Query Firestore to check for matching credentials
-                    const q = query(collection(db, "volunteer_users"), where("email", "==", email), where("password", "==", password));
-                    const querySnapshot = await getDocs(q);
+                const q = query(collection(db, "volunteer_users"), where("email", "==", email), where("password", "==", password));
+                const querySnapshot = await getDocs(q);
 
-                    if (!querySnapshot.empty) {
-                        // Credentials match
-                        alert("Login successful!");
+                if (!querySnapshot.empty) {
+                    const doc = querySnapshot.docs[0];
+                    const docId = doc.id;
 
-                        // Save email to localStorage
-                        localStorage.setItem("loggedInVolunteerEmail", email);
+                    console.log("Logged-In Volunteer Document ID:", docId); // Debug log
+                    localStorage.setItem("loggedInVolunteerId", docId);
 
-                        // Redirect to volunteer dashboard
-                        window.location.href = "EventDiscovery(Volunteer).html";
-                    } else {
-                        // No matching credentials found
-                        alert("Invalid email or password. Please try again.");
-                    }
-                } catch (error) {
-                    console.error("Error logging in: ", error);
-                    alert("Error logging in. Please try again later.");
+                    alert("Login successful!");
+                    window.location.href = "VolunteerDashboard.html";
+                } else {
+                    lert("Invalid email or password.");
                 }
+            } catch (error) {
+                console.error("Error during login:", error);
+                alert("Error logging in. Please try again later.");
+            }
+
             });
         </script>
     </body>

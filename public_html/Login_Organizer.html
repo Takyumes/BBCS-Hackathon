@@ -27,7 +27,7 @@
         <script type="module">
             // Import Firebase modules
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-            import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+            import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
             // Firebase Configuration
             const firebaseConfig = { 
@@ -46,36 +46,39 @@
 
             // Form submission event listener
             document.getElementById("submitBtn").addEventListener("click", async (e) => {
-            e.preventDefault();
+                e.preventDefault();
 
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
 
-            if (!email || !password) {
-                alert("Please fill in both email and password fields.");
-                return;
-            }
-
-            try {
-                const q = query(collection(db, "organizer_users"), where("email", "==", email), where("password", "==", password));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    // Save email to localStorage
-                    localStorage.setItem("loggedInEmail", email);
-
-                    // Redirect to dashboard
-                    alert("Login successful!");
-                    window.location.href = "OrganizerDashboard.html";
-                } else {
-                    alert("Invalid email or password. Please try again.");
+                if (!email || !password) {
+                    alert("Please fill in both email and password fields.");
+                    return;
                 }
-            } catch (error) {
-                console.error("Error logging in: ", error);
-                alert("Error logging in. Please try again later.");
-            }
-        });
 
+                try {
+                    // Query Firestore to find a matching document
+                    const q = query(collection(db, "organizer_users"), where("email", "==", email), where("password", "==", password));
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        // Get the document ID and save it to localStorage
+                        const doc = querySnapshot.docs[0];
+                        const docId = doc.id;
+
+                        localStorage.setItem("loggedInOrganizerId", docId);
+
+                        // Redirect to dashboard
+                        alert("Login successful!");
+                        window.location.href = "OrganizerDashboard.html";
+                    } else {
+                        alert("Invalid email or password. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error logging in: ", error);
+                    alert("Error logging in. Please try again later.");
+                }
+            });
         </script>
     </body>
 </html>

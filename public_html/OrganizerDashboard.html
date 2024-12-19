@@ -24,7 +24,7 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         // Firebase Configuration
         const firebaseConfig = { 
@@ -37,47 +37,41 @@
             measurementId: "G-5D39RT99NX" 
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to update the Welcome Message and store key-value pair in localStorage
+        console.log("Firestore initialized:", db); // Debugging Firestore initialization
+
         async function updateWelcomeMessage() {
             const welcomeMessage = document.getElementById("welcomeMessage");
 
-            // Retrieve the logged-in user's email from localStorage
-            const loggedInEmail = localStorage.getItem("loggedInEmail");
+            // Retrieve the logged-in organizer ID from localStorage
+            const loggedInOrganizerId = localStorage.getItem("loggedInOrganizerId");
 
-            if (!loggedInEmail) {
+            console.log("Logged In Organizer ID:", loggedInOrganizerId); // Debug log
+
+            if (!loggedInOrganizerId) {
                 alert("No user is logged in.");
+                window.location.href = "Login_Organizer.html"; // Redirect to login
                 return;
             }
 
             try {
-                // Query Firestore for the user's organizationName
-                const q = query(collection(db, "organizer_users"), where("email", "==", loggedInEmail));
-                const querySnapshot = await getDocs(q);
+                // Fetch organizer document by ID
+                const organizerDocRef = doc(db, "organizer_users", loggedInOrganizerId);
+                const organizerDoc = await getDoc(organizerDocRef);
 
-                if (!querySnapshot.empty) {
-                    const doc = querySnapshot.docs[0];
-                    const data = doc.data();
-
-                    // Update the Welcome Message
+                if (organizerDoc.exists()) {
+                    const data = organizerDoc.data();
+                    console.log("Organizer Data:", data); // Debug log
                     welcomeMessage.textContent = `Welcome, ${data.organizationName}`;
-
-                    // Store key-value pair in localStorage
-                    localStorage.setItem("loggedInOrganizerName", data.organizationName);
-                    localStorage.setItem("loggedInOrganizerEmail", data.email);
-
-                    console.log("Stored in localStorage:", {
-                        loggedInOrganizerName: data.organizationName,
-                        loggedInOrganizerEmail: data.email
-                    });
                 } else {
-                    alert("Organizer not found in the database.");
+                    alert("Organizer profile not found.");
+                    console.error("No document found with the given ID:", loggedInOrganizerId);
+                    window.location.href = "Login_Organizer.html"; // Redirect to login
                 }
             } catch (error) {
-                console.error("Error fetching organizer name: ", error);
+                console.error("Error fetching organizer details:", error);
                 alert("An error occurred while fetching your profile information.");
             }
         }
