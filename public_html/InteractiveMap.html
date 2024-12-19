@@ -66,7 +66,7 @@
         <a id="dashboardLink" href="#" class="nav-link">DASHBOARD</a>
 
         <div class="account-widget">
-            <button class="img-button" onclick="window.location.href='profile_details.html'">
+            <button class="img-button"">
                 <img src="account.png" alt="Account Icon" class="account-icon"/>
             </button>
         </div>
@@ -94,6 +94,34 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // Dynamically set the profile link based on the user type
+        function setProfileDetailsLink() {
+            const accountButton = document.querySelector(".img-button");
+            const loggedInVolunteerId = localStorage.getItem("loggedInVolunteerId");
+            const loggedInOrganizerId = localStorage.getItem("loggedInOrganizerId");
+
+            if (loggedInVolunteerId) {
+                // Redirect to volunteer profile details
+                accountButton.onclick = () => {
+                    window.location.href = "profile_details_volunteer.html";
+                };
+            } else if (loggedInOrganizerId) {
+                // Redirect to organizer profile details
+                accountButton.onclick = () => {
+                    window.location.href = "profile_details_organizer.html";
+                };
+            } else {
+                // Redirect to login if no user is logged in
+                accountButton.onclick = () => {
+                    window.location.href = "Login.html";
+                };
+            }
+        }
+
+        // Set the profile details link
+        setProfileDetailsLink();
+
 
         // Function to dynamically set the dashboard link to the referring page
         function setDashboardLink() {
