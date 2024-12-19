@@ -22,11 +22,9 @@
     <div id="events-list"></div>
 
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        // Firebase Configuration
         const firebaseConfig = { 
             apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
             authDomain: "warmth-and-care-hub.firebaseapp.com",
@@ -40,15 +38,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        console.log("Firestore initialized:", db); // Debugging Firestore initialization
-
         async function updateWelcomeMessage() {
             const welcomeMessage = document.getElementById("welcomeMessage");
 
-            // Retrieve the logged-in organizer ID from localStorage
             const loggedInOrganizerId = localStorage.getItem("loggedInOrganizerId");
-
-            console.log("Logged In Organizer ID:", loggedInOrganizerId); // Debug log
 
             if (!loggedInOrganizerId) {
                 alert("No user is logged in.");
@@ -57,17 +50,14 @@
             }
 
             try {
-                // Fetch organizer document by ID
                 const organizerDocRef = doc(db, "organizer_users", loggedInOrganizerId);
                 const organizerDoc = await getDoc(organizerDocRef);
 
                 if (organizerDoc.exists()) {
                     const data = organizerDoc.data();
-                    console.log("Organizer Data:", data); // Debug log
                     welcomeMessage.textContent = `Welcome, ${data.organizationName}`;
                 } else {
                     alert("Organizer profile not found.");
-                    console.error("No document found with the given ID:", loggedInOrganizerId);
                     window.location.href = "Login_Organizer.html"; // Redirect to login
                 }
             } catch (error) {
@@ -76,8 +66,68 @@
             }
         }
 
-        // Call the function to update the Welcome Message
+        async function loadEvents() {
+            const eventsList = document.getElementById("events-list");
+            eventsList.innerHTML = ""; // Clear any existing content
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "events"));
+
+                if (querySnapshot.empty) {
+                    eventsList.innerHTML = "<p>No events available at the moment.</p>";
+                    return;
+                }
+
+                const today = new Date();
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+
+                    const registrationDate = data.register_end ? new Date(data.register_end) : null;
+                    const eventDate = data.event_date ? new Date(data.event_date) : null;
+
+                    let status = "N/A";
+                    if (registrationDate && eventDate) {
+                        if (today < registrationDate) {
+                            status = "Registration Ongoing";
+                        } else if (today >= registrationDate && today < eventDate) {
+                            status = "Event Upcoming";
+                        } else if (today.toDateString() === eventDate.toDateString()) {
+                            status = "Event Ongoing";
+                        } else if (today > eventDate) {
+                            status = "Event Completed";
+                        }
+                    }
+
+                    const imageURL = data.imageURL || "placeholder.png";
+                    const title = data.title || "Untitled Event";
+                    const volunteers = data.volunteers || "N/A";
+
+                    const eventCard = `
+                        <a href="http://localhost/Hackathon/public_html/EventsDetail.html?id=${doc.id}">
+                            <div class="event-card">
+                                <div class="event-image-placeholder">
+                                    <img src="${imageURL}" alt="Event image">
+                                </div>
+                                <div class="event-details">
+                                    <p class="title">${title}</p>
+                                    <p>Volunteers Needed: ${volunteers}</p>
+                                    <p>Status: ${status}</p>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    eventsList.insertAdjacentHTML("beforeend", eventCard);
+                });
+
+            } catch (error) {
+                console.error("Error loading events:", error);
+                alert("An error occurred while loading events. Please try again.");
+            }
+        }
+
         updateWelcomeMessage();
+        loadEvents();
     </script>
 </body>
 </html>

@@ -63,7 +63,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCtabvxLybPVNIfRTqWS2VbqhXaC0DHpD0",
             authDomain: "warmth-and-care-hub.firebaseapp.com",
@@ -71,15 +70,14 @@
             storageBucket: "warmth-and-care-hub.firebasestorage.app",
             messagingSenderId: "367718144977",
             appId: "1:367718144977:web:a814f539c1d224580c1ef0",
-            measurementId: "G-5D39RT99NX" 
+            measurementId: "G-5D39RT99NX"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Fetch Event ID from URL Query Parameters
-        const params = new URLSearchParams(window.location.search); //URLSearchParams extracts id query parameter from the URL
-        const eventId = params.get("id"); //put the id into eventId variable
+        const params = new URLSearchParams(window.location.search);
+        const eventId = params.get("id");
 
         const titleInput = document.getElementById("event-title");
         const descriptionInput = document.getElementById("description");
@@ -91,14 +89,24 @@
         const eventImage = document.getElementById("event-image");
         const categoryInput = document.getElementById("category");
         const signupInput = document.getElementById("signup_method");
+        const saveButton = document.getElementById("save-button");
+        const deleteButton = document.getElementById("delete-button");
 
-        // Fetch Event Data
         async function fetchEventData() {
-            const eventRef = doc(db, "events", eventId);
-            const eventSnap = await getDoc(eventRef); //fetches a single document by its ID.
+            const loggedInOrganizerId = localStorage.getItem("loggedInOrganizerId");
 
-            if (eventSnap.exists()) { //.exists() is a function to check existence
+            if (!loggedInOrganizerId) {
+                alert("No user is logged in.");
+                window.location.href = "Login_Organizer.html";
+                return;
+            }
+
+            const eventRef = doc(db, "events", eventId);
+            const eventSnap = await getDoc(eventRef);
+
+            if (eventSnap.exists()) {
                 const data = eventSnap.data();
+
                 titleInput.value = data.title;
                 descriptionInput.value = data.description;
                 dateTimeInput.value = data.event_date;
@@ -107,16 +115,25 @@
                 registerEndInput.value = data.register_end;
                 contactInput.value = data.contact;
                 categoryInput.value = data.category;
+                signupInput.value = data.signup;
                 if (data.imageURL) {
                     eventImage.src = data.imageURL;
                 }
+
+                // Disable inputs if the user isn't the creator
+                if (data.createdBy !== loggedInOrganizerId) {
+                    const inputs = document.querySelectorAll("input, textarea, select, button");
+                    inputs.forEach(input => input.disabled = true);
+                    alert("You are not authorized to edit this event.");
+                    window.history.back(); // Redirect the user to the previous page
+                }
             } else {
                 alert("Event not found!");
+                window.location.href = "OrganizerDashboard.html";
             }
         }
-        //addEventListener is used to perform an action when a particular action is exceuted
-        // Save Changes
-        document.getElementById("save-button").addEventListener("click", async () => {
+
+        saveButton.addEventListener("click", async () => {
             const updatedData = {
                 title: titleInput.value,
                 description: descriptionInput.value,
@@ -129,22 +146,19 @@
                 signup: signupInput.value
             };
 
-            await updateDoc(doc(db, "events", eventId), updatedData); //updateDoc update the document fields in FireStore.
-            //input fields current values are stored in updatedData object and pushed to Firestore
+            await updateDoc(doc(db, "events", eventId), updatedData);
             alert("Event updated successfully!");
         });
 
-        // Cancel Event
-        document.getElementById("delete-button").addEventListener("click", async () => {
+        deleteButton.addEventListener("click", async () => {
             const confirmDelete = confirm("Are you sure you want to cancel this event?");
             if (confirmDelete) {
-                await deleteDoc(doc(db, "events", eventId)); //deleteDoc() deletes the specified document
+                await deleteDoc(doc(db, "events", eventId));
                 alert("Event cancelled successfully!");
                 window.location.href = "OrganizerDashboard.html";
             }
         });
 
-        // Back to Dashboard
         document.getElementById("back-button").addEventListener("click", () => {
             window.location.href = "OrganizerDashboard.html";
         });
